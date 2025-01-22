@@ -169,5 +169,5 @@ The script handles various edge cases:
   - Parallel processing can strain system resources on large datasets
   
 6. **Input Dataset**
-  -The script was developed for the outputs of guide design tools from the Peters lab, which can be found here: https://github.com/ryandward/crispr_experiment/tree/main
-  -The TSV with the output guide design does not include gene length or chromosomal coordinates, so gene length is approximated by the offset positions of the first and last available guide.
+  - The script was developed for the outputs of guide design tools from the Peters lab, which can be found here: https://github.com/ryandward/crispr_experiment/tree/main
+  - The TSV with the output guide design does not include gene length or chromosomal coordinates, so gene length is approximated by the offset positions of the first and last available guide.
