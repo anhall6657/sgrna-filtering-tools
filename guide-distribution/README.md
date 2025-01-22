@@ -24,16 +24,16 @@ python select_guides.py input.tsv \
 ## Input
 - TSV file containing guide RNA information
 - Columns directly called:
-  - locus_tag: Gene identifier
-  - sp_dir: Strand of Spacer (F or R)
-  - offset: Position relative to gene start (must be ≥ 0)
+   - locus_tag: Gene identifier
+   - sp_dir: Strand of Spacer (F or R)
+   - offset: Position relative to gene start (must be ≥ 0)
 
 ## Output
 - Creates new TSV file with '_filtered' suffix
 - Maintains all original columns
 - Adds new columns:
-  - original_guide_count: Number of guides available for that gene/orientation
-  - selected_guide_count: Number of guides selected after filtering
+   - original_guide_count: Number of guides available for that gene/orientation
+   - selected_guide_count: Number of guides selected after filtering
 
 ## Distribution Approach
 
@@ -145,29 +145,29 @@ The script handles various edge cases:
 ## Limitations and Constraints
 
 1. **Fixed End Points**
-  - First and last guides are always selected and cannot be moved during optimization
-  - This may occasionally prevent finding a more even distribution that excludes extreme positions
+   - First and last guides are always selected and cannot be moved during optimization
+   - This may occasionally prevent finding a more even distribution that excludes extreme positions
 
 2. **Optimization vs Runtime**
-  - Simulated annealing parameters balance finding optimal distributions with computational efficiency
-  - More thorough exploration of possible distributions requires longer runtime
-  - Early stopping when no improvement is found may occasionally miss better distributions
+   - Simulated annealing parameters balance finding optimal distributions with computational efficiency
+   - More thorough exploration of possible distributions requires longer runtime
+   - Early stopping when no improvement is found may occasionally miss better distributions
 
 3. **Gap Analysis Trade-offs**
-  - Gap identification requires meeting both size criteria (relative to gene length and ideal spacing)
-  - This stringent approach might miss biologically relevant gaps that only meet one criterion
-  - However, since gap-based selections can be modified during optimization, the impact is minimized
+   - Gap identification requires meeting both size criteria (relative to gene length and ideal spacing)
+   - This stringent approach might miss biologically relevant gaps that only meet one criterion
+   - However, since gap-based selections can be modified during optimization, the impact is minimized
 
 4. **Even Spacing vs Biological Context**
-  - The evenness score only considers distances between consecutive guides
-  - Does not account for other biological features like protein domains or regulatory regions
-  - More sophisticated scoring could incorporate additional biological constraints
+   - The evenness score only considers distances between consecutive guides
+   - Does not account for other biological features like protein domains or regulatory regions
+   - More sophisticated scoring could incorporate additional biological constraints
 
 5. **Computational Resources**
-  - Memory usage scales with number of guides per gene
-  - Runtime increases with number of genes and requested guides
-  - Parallel processing can strain system resources on large datasets
+   - Memory usage scales with number of guides per gene
+   - Runtime increases with number of genes and requested guides
+   - Parallel processing can strain system resources on large datasets
   
 6. **Input Dataset**
-  - The script was developed for the outputs of guide design tools from the Peters lab, which can be found here: https://github.com/ryandward/crispr_experiment/tree/main
-  - The TSV with the output guide design does not include gene length or chromosomal coordinates, so gene length is approximated by the offset positions of the first and last available guide.
+   - The script was developed for the outputs of guide design tools from the Peters lab, which can be found here: https://github.com/ryandward/crispr_experiment/tree/main
+   - The TSV with the output guide design does not include gene length or chromosomal coordinates, so gene length is approximated by the offset positions of the first and last available guide.
