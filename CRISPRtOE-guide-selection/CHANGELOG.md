@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.1] - 2025-01-25
+
+### Fixed
+- Fixed handling of origin-crossing features in find_feature_free_regions.py
+- Added proper handling of features without qualifiers
+- Fixed NoneType error in feature processing
 ## [2.0.0] - 2025-01-25
 
 ### Major Changes

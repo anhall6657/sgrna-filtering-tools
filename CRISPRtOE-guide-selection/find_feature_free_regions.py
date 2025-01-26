@@ -20,7 +20,7 @@ def parse_arguments():
     return parser.parse_args()
     
 def get_features_from_genbank(genbank_path, include_types=None, exclude_types=None):
-    """Extract features from GenBank file"""
+    """Extract features from GenBank file, splitting origin-crossing features"""
     features_list = []
     
     for record in SeqIO.parse(genbank_path, "genbank"):
@@ -29,43 +29,55 @@ def get_features_from_genbank(genbank_path, include_types=None, exclude_types=No
         
         # Process each feature
         for feature in record.features:
+            print(f"\nFeature type: {feature.type}")
+            print(f"Location: {feature.location}")
+            
             # Skip excluded features
             if feature.type in exclude_types:
                 continue
             if include_types and feature.type not in include_types:
                 continue
                 
-            # Handle features that cross the origin
+            # Handle features that cross origin
             if isinstance(feature.location, CompoundLocation):
+                print("Found origin-crossing feature:")
+                print(f"Original location: {feature.location}")
                 # Get the parts of the compound location
-                parts = feature.location.parts
-                # First part gives us the start, last part gives us the end
-                start = parts[0].start + 1  # Convert to 1-based
-                end = parts[-1].end
+                for part in feature.location.parts:
+                    start = part.start + 1  # Convert to 1-based
+                    end = part.end
+                    print(f"Processing part: {start}..{end}")
+                    strand = '+' if part.strand == 1 else '-'
+                    
+                    features_list.append({
+                        'chr': chrom,
+                        'feature_type': feature.type,
+                        'start': start,
+                        'end': end,
+                        'strand': strand,
+                        'locus_tag': feature.qualifiers.get('locus_tag', [''])[0] if 'locus_tag' in feature.qualifiers else '',
+                        'gene': feature.qualifiers.get('gene', [''])[0] if 'gene' in feature.qualifiers else '',
+                        'chrom_size': chrom_size
+                    })
             else:
+                # Handle normal features
                 start = feature.location.start + 1  # Convert to 1-based
                 end = feature.location.end
-            
-            strand = '+' if feature.location.strand == 1 else '-'
-            
-            # Get feature qualifiers
-            qualifiers = feature.qualifiers
-            locus_tag = qualifiers.get('locus_tag', [''])[0]
-            gene = qualifiers.get('gene', [''])[0]
-            
-            features_list.append({
-                'chr': chrom,
-                'feature_type': feature.type,
-                'start': start,
-                'end': end,
-                'strand': strand,
-                'locus_tag': locus_tag,
-                'gene': gene,
-                'chrom_size': chrom_size
-            })
+                strand = '+' if feature.location.strand == 1 else '-'
+                
+                features_list.append({
+                    'chr': chrom,
+                    'feature_type': feature.type,
+                    'start': start,
+                    'end': end,
+                    'strand': strand,
+                    'locus_tag': feature.qualifiers.get('locus_tag', [''])[0] if 'locus_tag' in feature.qualifiers else '',
+                    'gene': feature.qualifiers.get('gene', [''])[0] if 'gene' in feature.qualifiers else '',
+                    'chrom_size': chrom_size
+                })
     
     return pd.DataFrame(features_list)
-
+    
 def find_safe_regions(features_df, upstream_buffer=0, downstream_buffer=0):
     """Identify regions without any features, using directional buffers"""
     safe_regions = []
